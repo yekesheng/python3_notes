@@ -1,0 +1,42 @@
+Install Python 3 on CentOS 6
+#Method 1
+	# yum install centos-release-scl
+	# yum --disablerepo="*" --enablerepo="centos-sclo-rh" list *python3*
+	# yum install rh-python36
+	# yum info rh-python36
+	# scl enable rh-python36 bash
+	# scl -l
+
+#Method 2
+	# yum install epel-release
+	# yum --disablerepo="*" --enablerepo="epel" list python3*
+	# yum --disablerepo="*" --enablerepo="epel" install python34
+	# yum --enablerepo=epel info python34
+
+#Method 3
+	# yum install epel-release
+	# curl 'https://setup.ius.io/' -o setup-ius.sh
+	# sh setup-ius.sh
+	# yum --disablerepo="*" --enablerepo="ius" list python3*
+	# yum --enablerepo=ius install python36u
+	# yum --enablerepo=ius info python36u
+
+#Set Python path (for method 2&3)
+	# update-alternatives --install /usr/bin/python python /usr/bin/python3.4 1
+	# update-alternatives --install /usr/bin/python python /usr/bin/python3.6 2
+	# update-alternatives –remove python /usr/bin/python3.4
+	# update-alternatives --config python
+
+Install mysqlclient for Python 3
+	# pip install mysqlclient
+	# python3.6 -m pip install mysqlclient
+
+Other useful libs:
+	# pip install profilehooks
+		from profilehooks import profile
+		@profile(immediate=True)
+		def read_by_pymysql():
+			connection = pymysql.connect(host='localhost', user='root', db='test')
+			c = connection.cursor()
+			c.execute("select * from t_test;")
+			res = c.fetchall()
