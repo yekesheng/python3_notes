@@ -11,25 +11,22 @@ g_db_sock = "/data/mysql8/data/mysql.sock"
 class LogParser:
 
     def __init__(self):
-        pass
+        self.conn = MySQLdb.connect(unix_socket=g_db_sock,host=g_db_host,user=g_db_user,passwd=g_db_pass,db=g_db_name,charset="utf8mb4")
+        self.cursor = self.conn.cursor()
 
     def __del__(self):
-        pass
+        self.cursor.close()
+        self.conn.close()
 
     def dumptoMysqldb(self, datalist):
         if len(datalist) <= 0:
             return
-        conn=MySQLdb.connect(unix_socket=g_db_sock,host=g_db_host,user=g_db_user,passwd=g_db_pass,db=g_db_name,charset="utf8mb4")
-        cursor = conn.cursor()
         try:
-            sql = "insert into t_log(logTime,clientId,postData) values (%s,%s,%s)"
-            cursor.executemany(sql, datalist)
+            sql = "insert into tapitime(logtime,phoneId,runtime,errcode,urlpath) values (%s,%s,%s,%s,%s)"
+            self.cursor.executemany(sql, datalist)
         except:
             pass
-        finally:
-            conn.commit()
-            cursor.close()
-        conn.close()
+        self.conn.commit()
 
     def parseAccess(self):
 		    # [2020-03-19 10:26:01][28390] 62 16.204.18.7 -[[[logType],[35186],[tag],[postData],[1],[145]]]-
